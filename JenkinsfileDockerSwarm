@@ -1,10 +1,10 @@
 node{
     stage("Git CheckOut"){
-        git url: 'https://github.com/MithunTechnologiesDevOps/spring-boot-mongo-docker.git',branch: 'master'
+        git credentialsId: 'git_credentials', url: 'https://github.com/shiv4340/spring-boot-mongo-docker.git'
     }
     
     stage(" Maven Clean Package"){
-      def mavenHome =  tool name: "Maven-3.9.3", type: "maven"
+      def mavenHome =  tool name: "maven-3.9.3", type: "maven"
       def mavenCMD = "${mavenHome}/bin/mvn"
       sh "${mavenCMD} clean package"
     } 
@@ -14,7 +14,7 @@ node{
     }
     
     stage("Docker Push"){
-        withCredentials([string(credentialsId: 'docker_hub', variable: 'docker_Hub')]) {
+        withCredentials([string(credentialsId: 'docker_hub', variable: 'docker_hub')]) {
           sh "docker login -u shiv708 -p ${docker_hub}"
         }
         sh "docker push shiv708/spring-boot-mongo"
@@ -29,8 +29,8 @@ node{
     stage("Deploy to docker swarm cluster"){
         sshagent(['Docker_Swarm_Manager_Dev']) {
 		    sh 'scp -o StrictHostKeyChecking=no  docker-compose.yml ubuntu@172.31.47.232:'
-		    //sh 'ssh -o StrictHostKeyChecking=no ubuntu@172.31.47.232 docker stack rm springboot'
-                    sh 'ssh -o StrictHostKeyChecking=no ubuntu@172.31.47.232 docker stack deploy --prune --compose-file docker-compose.yml springboot'
+		    //sh 'ssh -o StrictHostKeyChecking=no ubuntu@172.31.33.81 docker stack rm springboot'
+                    sh 'ssh -o StrictHostKeyChecking=no ubuntu@172.31.33.81 docker stack deploy --prune --compose-file docker-compose.yml springboot'
         }
     }
 }
