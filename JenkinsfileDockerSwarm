@@ -4,7 +4,7 @@ node{
     }
     
     stage(" Maven Clean Package"){
-      def mavenHome =  tool name: "Maven-3.6.1", type: "maven"
+      def mavenHome =  tool name: "Maven-3.9.3", type: "maven"
       def mavenCMD = "${mavenHome}/bin/mvn"
       sh "${mavenCMD} clean package"
     } 
@@ -14,8 +14,8 @@ node{
     }
     
     stage("Docker Push"){
-        withCredentials([string(credentialsId: 'Docker_Hub_Pwd', variable: 'Docker_Hub_Pwd')]) {
-          sh "docker login -u shiv708 -p ${Docker_Hub_Pwd}"
+        withCredentials([string(credentialsId: 'docker_hub', variable: 'docker_Hub')]) {
+          sh "docker login -u shiv708 -p ${docker_hub}"
         }
         sh "docker push shiv708/spring-boot-mongo"
         
